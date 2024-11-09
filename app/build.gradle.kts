@@ -72,4 +72,6 @@ dependencies {
 
     implementation ("com.google.accompanist:accompanist-pager:0.30.1") // latest version for pager
     implementation ("io.coil-kt:coil-compose:2.1.0") // latest version for Coil
+
+    implementation("androidx.compose.material:material-icons-extended")
 }

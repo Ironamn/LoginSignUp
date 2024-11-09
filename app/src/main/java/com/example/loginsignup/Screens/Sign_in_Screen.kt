@@ -1,5 +1,6 @@
 package com.example.loginsignup.Screens
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -17,10 +18,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.MailOutline
+import androidx.compose.material.icons.outlined.Visibility
+import androidx.compose.material.icons.outlined.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -32,19 +37,25 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.loginsignup.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 
 @Composable
-fun LoginScreen() {
+fun LoginScreen(
+    navController: NavController
+) {
     Column(
         modifier = Modifier
             .padding(10.dp)
@@ -53,6 +64,14 @@ fun LoginScreen() {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
+        val correctUsername = "admin"
+        val correctPassword = "1234"
+        var username by remember { mutableStateOf("") }
+        var password by remember { mutableStateOf("") }
+        var isPasswordVisible by remember { mutableStateOf(false) }
+        var loginError by remember { mutableStateOf(false) }
+        val context = LocalContext.current
+
         Image(
             painter = painterResource(id = R.drawable.computer),
             contentDescription = null,
@@ -65,8 +84,8 @@ fun LoginScreen() {
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Start
         )
-        var username by remember { mutableStateOf("") }
-        var password by remember { mutableStateOf("") }
+
+
         TextField(
             value = username,
             onValueChange = { username = it },
@@ -92,6 +111,24 @@ fun LoginScreen() {
         TextField(
             value = password,
             onValueChange = { password = it },
+            visualTransformation = if (isPasswordVisible)
+                VisualTransformation.None
+            else
+                PasswordVisualTransformation(),
+            trailingIcon = {
+                IconButton(onClick = { isPasswordVisible = !isPasswordVisible }) {
+                    Icon(
+                        imageVector = if (isPasswordVisible)
+                            Icons.Outlined.Visibility
+                        else
+                            Icons.Outlined.VisibilityOff,
+                        contentDescription = if (isPasswordVisible)
+                            "Hide password"
+                        else
+                            "Show password"
+                    )
+                }
+            },
             placeholder = {
                 Text(text = "Password")
             },
@@ -112,7 +149,16 @@ fun LoginScreen() {
             )
         )
         Button(
-            onClick = { /*TODO*/ },
+            onClick = {
+
+                if (
+                    username == correctUsername && password == correctPassword
+                )
+                    Toast.makeText(context, "Login Successful", Toast.LENGTH_SHORT).show()
+                else
+
+                    Toast.makeText(context, "Incorrect Password", Toast.LENGTH_SHORT).show()
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)
@@ -217,27 +263,26 @@ fun LoginScreen() {
             horizontalArrangement = Arrangement.Center
         ) {
             Text(text = "Don't have an account?, ")
-            SignUpScreen()
+
+            Text(
+                text = "Sign up",
+                color = Color.Blue,
+                modifier = Modifier
+                    .clickable {
+                        navController.navigate("create_screen")
+                    },
+                textDecoration = TextDecoration.Underline
+            )
+
         }
 
     }
 }
 
-@Composable
-fun SignUpScreen(modifier: Modifier = Modifier) {
-    Text(
-        text = "Sign up",
-        color = Color.Blue,
-        modifier = Modifier
-            .clickable {
+//@Composable
+//fun SignUpScreen(
+//    navController: NavController
+//) {
+//
+//}
 
-            },
-        textDecoration = TextDecoration.Underline
-        )
-}
-
-@Preview
-@Composable
-private fun LoginScreenPreview() {
-    LoginScreen()
-}
